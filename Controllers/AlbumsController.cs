@@ -62,14 +62,25 @@ namespace BandAPI.Controllers
         }
 
         [HttpPut("{albumId}")]
-        public IActionResult UpdateAlbumForBand(Guid bandId, Guid albumId, [FromBody] AlbumForUpdatingDto album)
+        public IActionResult UpdateAlbumForBand(Guid bandId, Guid albumId, 
+            [FromBody] AlbumForUpdatingDto album)
         {
             if (!_bandAlbumResponsitory.BandExists(bandId))
                 return NotFound();
 
             var albumFromRepo = _bandAlbumResponsitory.GetAlbum(bandId, albumId);
             if (albumFromRepo == null)
-                return NotFound();
+            {
+                var albumToAdd = _mapper.Map<entities.Album>(album);
+                albumToAdd.Id = albumId;
+                _bandAlbumResponsitory.AddAlbum(bandId, albumToAdd);
+                _bandAlbumResponsitory.Save();
+
+                var albumToReturn = _mapper.Map<AlbumDto>(albumToAdd);
+
+                return CreatedAtRoute("GetAlbumForBand", new { bandId = bandId, albumId = albumToReturn.Id },
+                    albumToReturn);
+            }
 
             _mapper.Map(album, albumFromRepo);
             _bandAlbumResponsitory.UpdateAlbum(albumFromRepo);
@@ -85,7 +96,19 @@ namespace BandAPI.Controllers
                 return NotFound();
             var albumFromRepo = _bandAlbumResponsitory.GetAlbum(bandId, albumId);
             if (albumFromRepo == null)
-                return NotFound();
+            {
+                var albumDto = new AlbumForUpdatingDto();
+                patchDocument.ApplyTo(albumDto);
+                var albumToAdd = _mapper.Map<entities.Album>(albumDto);
+                albumToAdd.Id = albumId;
+
+                _bandAlbumResponsitory.AddAlbum(bandId, albumToAdd);
+                _bandAlbumResponsitory.Save();
+
+                var albumToReturn = _mapper.Map<AlbumDto>(albumToAdd);
+
+                return CreatedAtRoute("GetAlbumForBand", new { bandId = bandId, albumId = albumToReturn.Id }, albumToReturn);
+            }
 
             var albumToPatch = _mapper.Map<AlbumForUpdatingDto>(albumFromRepo);
             patchDocument.ApplyTo(albumToPatch, ModelState);
