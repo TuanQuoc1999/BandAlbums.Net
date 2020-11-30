@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BandAPI.Models;
 using BandAPI.Services;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -72,6 +73,43 @@ namespace BandAPI.Controllers
 
             _mapper.Map(album, albumFromRepo);
             _bandAlbumResponsitory.UpdateAlbum(albumFromRepo);
+            _bandAlbumResponsitory.Save();
+
+            return NoContent();
+        }
+
+        [HttpPatch]
+        public ActionResult PartiallyUpdateAlbumForBand(Guid bandId, Guid albumId,[FromBody] JsonPatchDocument<AlbumForUpdatingDto> patchDocument)
+        {
+            if (!_bandAlbumResponsitory.BandExists(bandId))
+                return NotFound();
+            var albumFromRepo = _bandAlbumResponsitory.GetAlbum(bandId, albumId);
+            if (albumFromRepo == null)
+                return NotFound();
+
+            var albumToPatch = _mapper.Map<AlbumForUpdatingDto>(albumFromRepo);
+            patchDocument.ApplyTo(albumToPatch, ModelState);
+
+            if (!TryValidateModel(albumToPatch))
+                return ValidationProblem(ModelState);
+            _mapper.Map(albumToPatch, albumFromRepo);
+            _bandAlbumResponsitory.UpdateAlbum(albumFromRepo);
+            _bandAlbumResponsitory.Save();
+
+            return NoContent();
+        }
+
+        [HttpDelete("{albumId}")]
+        public ActionResult DeleteAlbumForBand(Guid bandId, Guid albumId)
+        {
+            if (!_bandAlbumResponsitory.BandExists(bandId))
+                return NotFound();
+
+            var albumFromRepo = _bandAlbumResponsitory.GetAlbum(bandId, albumId);
+            if (albumFromRepo == null)
+                return NotFound();
+
+            _bandAlbumResponsitory.DeleteAlbum(albumFromRepo);
             _bandAlbumResponsitory.Save();
 
             return NoContent();
