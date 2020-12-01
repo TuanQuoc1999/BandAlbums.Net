@@ -21,7 +21,7 @@ namespace BandAPI.Services
             if (bandId == Guid.Empty)
                 throw new ArgumentNullException(nameof(bandId));
 
-            if(album == null)
+            if (album == null)
                 throw new ArgumentNullException(nameof(album));
 
             album.BandId = bandId;
@@ -38,7 +38,7 @@ namespace BandAPI.Services
 
         public bool AlbumExists(Guid albumId)
         {
-            if(albumId == Guid.Empty)
+            if (albumId == Guid.Empty)
                 throw new ArgumentNullException(nameof(albumId));
             return _context.Albums.Any(a => a.Id == albumId);
         }
@@ -108,13 +108,10 @@ namespace BandAPI.Services
                                  .OrderBy(b => b.Name).ToList();
         }
 
-        public IEnumerable<Band> GetBands(BandResourceParameters bandResourceParameters)
+        public PagedList<Band> GetBands(BandResourceParameters bandResourceParameters)
         {
             if (bandResourceParameters == null)
                 throw new ArgumentNullException(nameof(bandResourceParameters));
-
-            if (string.IsNullOrWhiteSpace(bandResourceParameters.MainGenre) && string.IsNullOrWhiteSpace(bandResourceParameters.SearchQuery))
-                return GetBands();
 
             var collection = _context.Bands as IQueryable<Band>;
 
@@ -130,7 +127,9 @@ namespace BandAPI.Services
                 collection = collection.Where(b => b.Name.Contains(searchQuery));
             }
 
-            return collection.ToList();
+            return PagedList<Band>.Create(collection,
+                bandResourceParameters.PageNumber, 
+                bandResourceParameters.PageSize);
         }
         public bool Save()
         {
