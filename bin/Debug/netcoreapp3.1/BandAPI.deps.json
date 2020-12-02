@@ -29,6 +29,7 @@
           "Microsoft.EntityFrameworkCore": "5.0.0",
           "Microsoft.EntityFrameworkCore.SqlServer": "5.0.0",
           "Microsoft.EntityFrameworkCore.Tools": "5.0.0",
+          "System.Linq.Dynamic.Core": "1.2.6",
           "Microsoft.AspNetCore.Antiforgery": "3.1.0.0",
           "Microsoft.AspNetCore.Authentication.Abstractions": "3.1.0.0",
           "Microsoft.AspNetCore.Authentication.Cookies": "3.1.0.0",
@@ -1013,6 +1014,17 @@
           "System.Resources.ResourceManager": "4.3.0",
           "System.Runtime": "4.3.0",
           "System.Runtime.Extensions": "4.3.0"
+        }
+      },
+      "System.Linq.Dynamic.Core/1.2.6": {
+        "runtime": {
+          "lib/netcoreapp2.1/System.Linq.Dynamic.Core.dll": {
+            "assemblyVersion": "1.2.6.0",
+            "fileVersion": "1.2.6.0"
+          }
+        },
+        "compile": {
+          "lib/netcoreapp2.1/System.Linq.Dynamic.Core.dll": {}
         }
       },
       "System.Net.NameResolution/4.3.0": {
@@ -3415,6 +3427,13 @@
       "sha512": "sha512-5DbqIUpsDp0dFftytzuMmc0oeMdQwjcP/EWxsksIz/w1TcFRkZ3yKKz0PqiYFMmEwPSWw+qNVqD7PJ889JzHbw==",
       "path": "system.linq/4.3.0",
       "hashPath": "system.linq.4.3.0.nupkg.sha512"
+    },
+    "System.Linq.Dynamic.Core/1.2.6": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-npaX0wSt/Q/b54m5yfDR5t7H2L68jP/iFBHYX/sfoQfEip2x1e9wi7qoV6A0UjXIiIVAW1AfpUae++FJth9GNw==",
+      "path": "system.linq.dynamic.core/1.2.6",
+      "hashPath": "system.linq.dynamic.core.1.2.6.nupkg.sha512"
     },
     "System.Net.NameResolution/4.3.0": {
       "type": "package",

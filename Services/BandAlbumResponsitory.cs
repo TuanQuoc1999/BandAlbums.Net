@@ -11,10 +11,12 @@ namespace BandAPI.Services
     public class BandAlbumResponsitory : IBandAlbumResponsitory
     {
         private readonly BandAlbumContext _context;
+        private readonly IPropertyMappingService _propertyMappingService;
 
-        public BandAlbumResponsitory(BandAlbumContext context)
+        public BandAlbumResponsitory(BandAlbumContext context, IPropertyMappingService propertyMappingService)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
+            _propertyMappingService = propertyMappingService;
         }
         public void AddAlbum(Guid bandId, Album album)
         {
@@ -127,6 +129,14 @@ namespace BandAPI.Services
                 collection = collection.Where(b => b.Name.Contains(searchQuery));
             }
 
+            if (!string.IsNullOrWhiteSpace(bandResourceParameters.OrderBy))
+            {
+                var bandPropertyMappingDictionary =
+                _propertyMappingService.GetPropertyMapping<Models.BandDto, entities.Band>();
+
+                collection = collection.ApplySort(bandResourceParameters.OrderBy, bandPropertyMappingDictionary);
+            }
+            
             return PagedList<Band>.Create(collection,
                 bandResourceParameters.PageNumber, 
                 bandResourceParameters.PageSize);
