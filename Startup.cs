@@ -30,9 +30,12 @@ namespace BandAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddResponseCaching();
             services.AddControllers(setupAction =>
             {
                 setupAction.ReturnHttpNotAcceptable = true;
+                setupAction.CacheProfiles.Add("90SecondsCacheProfile",
+                                              new CacheProfile { Duration = 90 });
             }).AddNewtonsoftJson(setupAction => {
                    setupAction.SerializerSettings.ContractResolver =
                    new CamelCasePropertyNamesContractResolver();
@@ -68,6 +71,7 @@ namespace BandAPI
                 });
             }
 
+            app.UseResponseCaching();
             app.UseRouting();
 
             app.UseAuthorization();
