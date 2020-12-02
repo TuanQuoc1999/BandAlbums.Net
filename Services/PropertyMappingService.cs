@@ -50,7 +50,7 @@ namespace BandAPI.Services
                 var propertyName = indexOfSpace == -1 ? trimmedField : 
                                                         trimmedField.Remove(indexOfSpace);
                 if (!propertyMapping.ContainsKey(propertyName))
-                    return false;
+                    return false;   
             }
             return true;
         }
